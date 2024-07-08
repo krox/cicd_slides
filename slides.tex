@@ -1,0 +1,105 @@
+\documentclass[english,xcolor=pst,11pt]{beamer}
+
+%\usetheme{Rochester}
+%\usetheme{Berkeley}
+\usetheme{Berlin}
+\usepackage{beamerthemesplit}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, bbm}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{physics, slashed}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{placeins}
+\usepackage{calc}
+\usepackage{float}
+\usepackage{xcolor}
+%\usepackage{accents}
+\usepackage{stackrel}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+
+\usepackage{tikz}
+\usetikzlibrary{patterns,math,calc}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{arrows}
+\renewcommand\epsilon\varepsilon % its probably not consistent in the tex code
+\renewcommand\nabla\partial % its probably not consistent in the tex code
+
+
+
+\title[Langevin Integration and Correlated Markov Chains]{Automatic testing of Lattice QCD Software on Tursa}
+\author{Simon Bürger}
+\date{July 25th, 2024}
+
+% \pdfinfo{
+%   /Title    (Scattering in Lattice Systems)
+%   /Author   (Simon Bürger)
+% }
+
+\newlength\leftsidebar
+\newlength\rightsidebar
+\makeatletter
+\setlength\leftsidebar{\beamer@leftsidebar}
+\setlength\rightsidebar{\beamer@rightsidebar}
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+ \begin{block}{Overview}
+  \begin{enumerate}
+   \item Lattice QCD basics
+   \item Integration schemes for the Lanvgevin Equation
+   \item Numerical results
+   \item Correlated Markov chains
+  \end{enumerate}
+ \end{block}
+
+\end{frame}
+
+
+
+\section{Lattice QCD}
+
+% Steps:
+%   - continuum action
+%   - Wick rotation -> probability distribution
+%   - pseudo-fermions -> matrix inversion
+%   - discretization -> going from gauge algebra to gauge group
+%   - doubling -> extra wilson term
+\begin{frame}
+
+% \begin{align*}
+%   L[\psi,\overline\psi,A] &= \sum_f\overline{\psi}_f(i\slashed{D}-m_f)\psi_f -  \frac{1}{2g^2} \trace F_{\mu\nu}F^{\mu\nu}\,, \\
+%   D_\mu &= \partial_\mu - iA_\mu\,, \\
+%   F_{\mu\nu} &= i[D_\mu,D_\nu]
+% \end{align*}
+
+
+Continuum Lagrangian (Euclidean metric)
+\begin{align*}
+ L[\psi,\overline\psi,A] &= \sum_f\overline\psi_f (\slashed D + m_f)\psi_f + \frac{1}{2g^2}\trace F_{\mu\nu}F_{\mu\nu} \\
+ F_{\mu\nu} &= -i[D_\mu,D_\nu] \\
+ D_\mu &= \partial_\mu + iA_\mu\
+\end{align*}
+
+Observable expecation values:
+\begin{align*}
+ \langle \mathcal O \rangle &= \frac{1}{Z} \int D\psi\, D\overline\psi\, DA\,\mathcal O(\psi,\overline\psi,A)\, e^{-S} \\
+ S &= \int_{\mathbb{R}^4}dx\, L
+\end{align*}
+\end{frame}
+
+
+
+\end{document}
