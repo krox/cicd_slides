@@ -35,9 +35,9 @@
 
 
 
-\title[Langevin Integration and Correlated Markov Chains]{Automatic testing of Lattice QCD Software on Tursa}
-\author{Simon Bürger}
-\date{July 25th, 2024}
+\title[Automatic software testing on an HPC cluster]{Automatic testing of Lattice QCD Software on an HPC cluster}
+\author{\textbf{Simon Bürger}, Antonin Portelli}
+\date{August 8th, 2024}
 
 % \pdfinfo{
 %   /Title    (Scattering in Lattice Systems)
@@ -55,50 +55,143 @@
 
 \maketitle
 
+% \begin{frame}
+%  \begin{block}{Overview}
+%   \begin{enumerate}
+%    \item Goals
+%    \item Implementation using TeamCity
+%    \item Performance monitoring
+%   \end{enumerate}
+%  \end{block}
+%
+% \end{frame}
+
+
+
+\section{Motivation and Goals}
+
 \begin{frame}
- \begin{block}{Overview}
-  \begin{enumerate}
-   \item Lattice QCD basics
-   \item Integration schemes for the Lanvgevin Equation
-   \item Numerical results
-   \item Correlated Markov chains
-  \end{enumerate}
- \end{block}
+
+\textbf{Goals}
+\begin{itemize}
+ \item \textbf{Continuous integration}: Notice breaking changing as soon as possible, avoid infamous ``works on my machine''
+ \item \textbf{Automatic deployment}: Improved reproducibility and simplified user experience
+ \item \textbf{Performance monitoring}: Detect performance regressions, caused by any part of the system
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\section{TeamCity Implementation}
+\textbf{TeamCity Architecture}
+\begin{figure}[H]
+	\centering
+  %\input{plots/schemes/schemes_quenched}
+  %\adjustbox{trim={.01\width} {.35\height} {0.01\width} {.35\height},clip}%
+    {\includegraphics[width=1.8in]{diagrams/teamcity.pdf}}
+\end{figure}
+\vfill
+\begin{itemize}
+ \item Scalable to arbitrary number of build servers
+ \item Communication via https, no public visibility required
+\end{itemize}
+
+
+
+
+\end{frame}
+
+\begin{frame}
+\textbf{Dedicated CICD hardware}
+ \begin{figure}[H]
+	\centering
+  %\input{plots/schemes/schemes_quenched}
+  %\adjustbox{trim={.01\width} {.35\height} {0.01\width} {.35\height},clip}%
+    {\includegraphics[width=3.2in]{diagrams/hardware.pdf}}
+\end{figure}
+
+\begin{itemize}
+ \item Four x86 servers, environment identical to the HPC clusters login nodes
+ \item Head server runs docker containers of various services, publicly visibly
+ \item Agents run on bare metal, not publicly visibly
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+ \textbf{Triggers for the CI system}
+\begin{itemize}
+ \item Each commit, including pending pull requests \\$\longrightarrow$ Buid and run unittests
+ \item Once per day: \\$\longrightarrow$ deploy new production binaries if there were any changes \\
+ $\longrightarrow$ run benchmarks, using latest production binaries
+ \item Benchmarking is run regardless of source code changes, thus effectively monitors the environment as well.
+\end{itemize}
+\end{frame}
+
+\section{HPC cluster integration}
+\begin{frame}
+ \textbf{Integration into the HPC cluster \emph{Tursa}}
+ \begin{itemize}
+  \item Problem: Build servers do not have GPUs
+  \item Solution: GPU-based unittests and benchmarking jobs are submitted via SLURM to the computing cluster
+  \item Finished jobs report back to TeamCity via a REST API
+ \end{itemize}
+
+\end{frame}
+
+\section{Showcase}
+\begin{frame}
+ \textbf{What does it look like?}\\
+ On a GitHub pull request:
+  \begin{figure}[H]
+	\centering
+  %\input{plots/schemes/schemes_quenched}
+  %\adjustbox{trim={.01\width} {.35\height} {0.01\width} {.35\height},clip}%
+    {\includegraphics[width=4.5in]{diagrams/pr.jpg}}
+\end{figure}
+\end{frame}
+
+
+{ % all template changes are local to this group.
+    \setbeamertemplate{navigation symbols}{}
+    \begin{frame}<article:0>[plain]
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[at=(current page.center)] {
+                \includegraphics[keepaspectratio,
+                                 width=\paperwidth,
+                                 height=\paperheight]{diagrams/benchmarks.jpg}
+            };
+        \end{tikzpicture}
+     \end{frame}
+}
+
+\section{Discussion}
+\begin{frame}
+ \textbf{Stability}
+ \begin{itemize}
+  \item All build results are backed up to a cloud storage provider
+  \item Configuration of TeamCity itself is tracked in a git repository
+  \end{itemize}
+  \textbf{Hardening}
+  \begin{itemize}
+  \item Build servers are not publicly visible, communication to main server is ``one-way''
+  \item Build agents run as dedicated  user with limited permissions on the cluster, e.g., no access to research data
+ \end{itemize}
+ \textbf{Future outlook}
+
+ \begin{itemize}
+  \item Solution is scalable to multiple HPC clusters
+ \end{itemize}
 
 \end{frame}
 
 
-
-\section{Lattice QCD}
-
-% Steps:
-%   - continuum action
-%   - Wick rotation -> probability distribution
-%   - pseudo-fermions -> matrix inversion
-%   - discretization -> going from gauge algebra to gauge group
-%   - doubling -> extra wilson term
 \begin{frame}
-
-% \begin{align*}
-%   L[\psi,\overline\psi,A] &= \sum_f\overline{\psi}_f(i\slashed{D}-m_f)\psi_f -  \frac{1}{2g^2} \trace F_{\mu\nu}F^{\mu\nu}\,, \\
-%   D_\mu &= \partial_\mu - iA_\mu\,, \\
-%   F_{\mu\nu} &= i[D_\mu,D_\nu]
-% \end{align*}
-
-
-Continuum Lagrangian (Euclidean metric)
-\begin{align*}
- L[\psi,\overline\psi,A] &= \sum_f\overline\psi_f (\slashed D + m_f)\psi_f + \frac{1}{2g^2}\trace F_{\mu\nu}F_{\mu\nu} \\
- F_{\mu\nu} &= -i[D_\mu,D_\nu] \\
- D_\mu &= \partial_\mu + iA_\mu\
-\end{align*}
-
-Observable expecation values:
-\begin{align*}
- \langle \mathcal O \rangle &= \frac{1}{Z} \int D\psi\, D\overline\psi\, DA\,\mathcal O(\psi,\overline\psi,A)\, e^{-S} \\
- S &= \int_{\mathbb{R}^4}dx\, L
-\end{align*}
+ \Large{\textbf{Questions?}} \\ \vfill
+ \small{(for a live demo, come talk to me later)}
 \end{frame}
+
 
 
 
