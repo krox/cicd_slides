@@ -53,7 +53,21 @@
 
 \begin{document}
 
-\maketitle
+%\maketitle
+
+\begin{frame}
+ \titlepage
+
+\begin{tikzpicture}[remember picture, overlay]
+    % Position the logos using node coordinates
+    \node[anchor=south west, yshift=1.5cm, xshift=2cm] at (current page.south west) {\includegraphics[width=2.3cm]{logos/dirac.png}};
+    \node[anchor=south west, yshift=3cm, xshift=2cm] at (current page.south west) {\includegraphics[width=2.3cm]{logos/stfc.png}};
+
+    \node[anchor=south east, yshift=1.5cm, xshift=-2cm] at (current page.south east) {\includegraphics[width=2.3cm]{logos/epcc.pdf}};
+    \node[anchor=south east, yshift=3cm, xshift=-2cm] at (current page.south east) {\includegraphics[width=2.3cm]{logos/edinburgh.pdf}};
+
+  \end{tikzpicture}
+\end{frame}
 
 % \begin{frame}
 %  \begin{block}{Overview}
