@@ -35,7 +35,7 @@
 
 
 
-\title{Continuous Performance Monitoring of the Grid library on a Supercomputer}
+\title[CI/CD for the Grid Library]{Continuous Performance Monitoring of the Grid Library on a Supercomputer}
 \author{\textbf{Simon Bürger}, Antonin Portelli}
 \date{August 8th, 2024}
 
@@ -58,14 +58,12 @@
 \begin{frame}
  \titlepage
 
-\begin{tikzpicture}[remember picture, overlay]
+ \begin{tikzpicture}[remember picture, overlay]
     % Position the logos using node coordinates
-    \node[anchor=south west, yshift=1.5cm, xshift=2cm] at (current page.south west) {\includegraphics[width=2.3cm]{logos/dirac.png}};
-    \node[anchor=south west, yshift=3cm, xshift=2cm] at (current page.south west) {\includegraphics[width=2.3cm]{logos/stfc.png}};
-
-    \node[anchor=south east, yshift=1.5cm, xshift=-2cm] at (current page.south east) {\includegraphics[width=2.3cm]{logos/epcc.pdf}};
-    \node[anchor=south east, yshift=3cm, xshift=-2cm] at (current page.south east) {\includegraphics[width=2.3cm]{logos/edinburgh.pdf}};
-
+    \node[anchor=south west, yshift=1cm, xshift=1cm] at (current page.south west) {\includegraphics[width=2.4cm]{logos/stfc.png}};
+    \node[anchor=south west, yshift=1cm, xshift=3.8cm] at (current page.south west) {\includegraphics[width=1.8cm]{logos/dirac.png}};
+    \node[anchor=south east, yshift=1cm, xshift=-3.8cm] at (current page.south east) {\includegraphics[width=2.2cm]{logos/epcc.pdf}};
+    \node[anchor=south east, yshift=1cm, xshift=-1cm] at (current page.south east) {\includegraphics[width=2.4cm]{logos/edinburgh.pdf}};
   \end{tikzpicture}
 \end{frame}
 
@@ -85,19 +83,63 @@
 \section{Motivation and Goals}
 
 \begin{frame}
+ \textbf{Our code base}
+ \begin{itemize}
+  \item Grid: data parallel C++ container classes mapping efficiently to SIMD architectures including GPUs \url{https://github.com/paboyle/Grid}
+  \item Hadrons: Grid-based workflow management system for lattice field theory simulations \url{https://github.com/aportelli/Hadrons}
+ \end{itemize}
+
+ \begin{figure}[H]
+	\centering
+  %\input{plots/schemes/schemes_quenched}
+  \adjustbox{trim={.00\width} {.0\height} {0.01\width} {.0\height},clip}%
+    {\includegraphics[width=3in]{diagrams/grid.pdf}}
+    \caption{Grid architechture, from \url{[hep-lat/1512.03487]}}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+ \textbf{Tursa Computing cluster}
+ \begin{itemize}
+  \item part of the \emph{DiRAC~High~Performance~Computing~Facility}
+  \item 178 compute nodes, each equipped with
+  \begin{itemize}
+    \item two \emph{AMD EPYC} processors
+    \item four \emph{NVIDIA Ampere A100} accelerators
+  \end{itemize}
+  \item interconnect
+  \begin{itemize}
+   \item NVLink on each node running at 600 GB/s
+   \item Infiniband network between nodes at 200 GB/s \\ (utilizing one network interface per GPU)
+  \end{itemize}
+
+  \item jobs are run via Slurm scheduler from dedicated login nodes
+  \item additional services (CPU nodes, storage, ...) available
+  \item find out more at \url{https://dirac.ac.uk}
+
+ \end{itemize}
+%  \begin{tikzpicture}[remember picture, overlay]
+%     % Position the logos using node coordinates
+%     \node[anchor=south wes^t, yshift=1cm, xshift=1cm] at (current page.south west) {\includegraphics[width=1.8cm]{logos/nvidia.png}};
+%     \node[anchor=south west, yshift=1cm, xshift=4cm] at (current page.south west) {\includegraphics[width=1.8cm]{logos/eviden.png}};
+%   \end{tikzpicture}
+\end{frame}
+
+\begin{frame}
 
 \textbf{Goals}
 \begin{itemize}
  \item \textbf{Continuous integration}: Notice breaking changes as soon as possible, avoid infamous ``works on my machine''
- \item \textbf{Automatic deployment}: Improved reproducibility and simplified user experience
- \item \textbf{Performance monitoring}: Detect performance regressions, caused by any part of the system
+ \item \textbf{Automatic deployment}: Improve reproducibility and simplify user experience
+ \item \textbf{Performance monitoring}: Detect performance degredations caused by any part of the system
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}
 
-\section{TeamCity Implementation}
+\section{Jetbrains TeamCity}
 \textbf{Jetbrains TeamCity Architecture}
 \begin{figure}[H]
 	\centering
@@ -126,8 +168,8 @@
 \end{figure}
 
 \begin{itemize}
- \item Four x86 servers, environment identical to the HPC clusters login nodes
- \item Head server runs docker containers of various services, publicly visibly
+ \item Four servers, environment identical to the clusters login nodes
+ \item Head server runs docker containers of various services, publicly visibly at \url{{git,ci}.dev.dirac.ed.ac.uk}
  \item Agents run on bare metal, not publicly visibly
 \end{itemize}
 
@@ -141,7 +183,11 @@
  $\longrightarrow$ run benchmarks, using latest production binaries
  \item Benchmarking is run regardless of source code changes, thus effectively monitors the runtime environment as well.
 \end{itemize}
+
 \end{frame}
+
+
+
 
 \section{HPC cluster integration}
 \begin{frame}
@@ -197,13 +243,24 @@
  \begin{itemize}
   \item Solution is scalable to multiple HPC clusters
  \end{itemize}
-TODO: This CI/CD solution was funded by the STFC DiRAC Facility
+ \vfill
+\emph{This CI/CD solution was funded by the STFC DiRAC Facility}
 \end{frame}
 
 
 \begin{frame}
+\centering
  \Large{\textbf{Questions?}} \\ \vfill
- \small{(for a live demo, come talk to me later. TODO: link)}
+ \small{for a live demo, come talk to me later, or visit \url{https://ci.dev.dirac.ed.ac.uk} \\(choose ``Log in as guest'')}
+
+ \begin{tikzpicture}[remember picture, overlay]
+    % Position the logos using node coordinates
+    \node[anchor=south west, yshift=1cm, xshift=1cm] at (current page.south west) {\includegraphics[width=2.4cm]{logos/stfc.png}};
+    \node[anchor=south west, yshift=1cm, xshift=3.8cm] at (current page.south west) {\includegraphics[width=1.8cm]{logos/dirac.png}};
+    \node[anchor=south east, yshift=1cm, xshift=-3.8cm] at (current page.south east) {\includegraphics[width=2.2cm]{logos/epcc.pdf}};
+    \node[anchor=south east, yshift=1cm, xshift=-1cm] at (current page.south east) {\includegraphics[width=2.4cm]{logos/edinburgh.pdf}};
+  \end{tikzpicture}
+
 \end{frame}
 
 
