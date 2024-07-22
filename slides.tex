@@ -35,7 +35,7 @@
 
 
 
-\title[Automatic software testing on an HPC cluster]{Automatic testing of Lattice QCD Software on an HPC cluster}
+\title{Continuous Performance Monitoring of the Grid library on a Supercomputer}
 \author{\textbf{Simon Bürger}, Antonin Portelli}
 \date{August 8th, 2024}
 
@@ -74,7 +74,7 @@
 
 \textbf{Goals}
 \begin{itemize}
- \item \textbf{Continuous integration}: Notice breaking changing as soon as possible, avoid infamous ``works on my machine''
+ \item \textbf{Continuous integration}: Notice breaking changes as soon as possible, avoid infamous ``works on my machine''
  \item \textbf{Automatic deployment}: Improved reproducibility and simplified user experience
  \item \textbf{Performance monitoring}: Detect performance regressions, caused by any part of the system
 \end{itemize}
@@ -84,7 +84,7 @@
 \begin{frame}
 
 \section{TeamCity Implementation}
-\textbf{TeamCity Architecture}
+\textbf{Jetbrains TeamCity Architecture}
 \begin{figure}[H]
 	\centering
   %\input{plots/schemes/schemes_quenched}
@@ -94,7 +94,7 @@
 \vfill
 \begin{itemize}
  \item Scalable to arbitrary number of build servers
- \item Communication via https, no public visibility required
+ \item Communication via https
 \end{itemize}
 
 
@@ -122,10 +122,10 @@
 \begin{frame}
  \textbf{Triggers for the CI system}
 \begin{itemize}
- \item Each commit, including pending pull requests \\$\longrightarrow$ Buid and run unittests
+ \item Each commit, including pending pull requests \\$\longrightarrow$ Build Grid and Hadrons and run unittests
  \item Once per day: \\$\longrightarrow$ deploy new production binaries if there were any changes \\
  $\longrightarrow$ run benchmarks, using latest production binaries
- \item Benchmarking is run regardless of source code changes, thus effectively monitors the environment as well.
+ \item Benchmarking is run regardless of source code changes, thus effectively monitors the runtime environment as well.
 \end{itemize}
 \end{frame}
 
@@ -170,7 +170,7 @@
 \begin{frame}
  \textbf{Stability}
  \begin{itemize}
-  \item All build results are backed up to a cloud storage provider
+  \item All build artifacts are backed up to a cloud storage provider
   \item Configuration of TeamCity itself is tracked in a git repository
   \end{itemize}
   \textbf{Hardening}
@@ -183,13 +183,13 @@
  \begin{itemize}
   \item Solution is scalable to multiple HPC clusters
  \end{itemize}
-
+TODO: This CI/CD solution was funded by the STFC DiRAC Facility
 \end{frame}
 
 
 \begin{frame}
  \Large{\textbf{Questions?}} \\ \vfill
- \small{(for a live demo, come talk to me later)}
+ \small{(for a live demo, come talk to me later. TODO: link)}
 \end{frame}
 
 
