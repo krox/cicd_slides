@@ -34,10 +34,16 @@
 \renewcommand\nabla\partial % its probably not consistent in the tex code
 
 
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
 
 \title[CI/CD for the Grid Library]{Continuous Performance Monitoring of the Grid Library on a Supercomputer}
 \author{\textbf{Simon Bürger}, Antonin Portelli}
-\date{July 30th, 2024}
+\date{July 30th, Lattice 2024, Liverpool}
 
 % \pdfinfo{
 %   /Title    (Scattering in Lattice Systems)
@@ -102,7 +108,7 @@
 \begin{frame}
  \textbf{Tursa Computing cluster}
  \begin{itemize}
-  \item part of the \emph{DiRAC~High~Performance~Computing~Facility}
+  \item part of the national \emph{STFC DiRAC HPC facility}
   \item 178 compute nodes, each equipped with
   \begin{itemize}
     \item two \emph{AMD EPYC} processors
@@ -110,20 +116,20 @@
   \end{itemize}
   \item interconnect
   \begin{itemize}
-   \item NVLink on each node running at 600 GB/s
-   \item Infiniband network between nodes at 200 GB/s \\ (utilizing one network interface per GPU)
+   \item NVLink on each node, running at 600 GB/s
+   \item Four HDR-200 infiniband interfaces per node
   \end{itemize}
 
   \item jobs are run via Slurm scheduler from dedicated login nodes
-  \item additional services (CPU nodes, storage, ...) available
   \item find out more at \url{https://dirac.ac.uk}
 
  \end{itemize}
-%  \begin{tikzpicture}[remember picture, overlay]
-%     % Position the logos using node coordinates
-%     \node[anchor=south wes^t, yshift=1cm, xshift=1cm] at (current page.south west) {\includegraphics[width=1.8cm]{logos/nvidia.png}};
-%     \node[anchor=south west, yshift=1cm, xshift=4cm] at (current page.south west) {\includegraphics[width=1.8cm]{logos/eviden.png}};
-%   \end{tikzpicture}
+
+ \begin{tikzpicture}[remember picture, overlay]
+    % Position the logos using node coordinates
+    \node[anchor=south west, yshift=1cm, xshift=3cm] at (current page.south west) {\includegraphics[width=2.4cm]{logos/stfc.png}};
+    \node[anchor=south west, yshift=1cm, xshift=5.8cm] at (current page.south west) {\includegraphics[width=1.8cm]{logos/dirac.png}};
+  \end{tikzpicture}
 \end{frame}
 
 \begin{frame}
@@ -140,13 +146,24 @@
 \begin{frame}
 
 \section{Jetbrains TeamCity}
+\begin{minipage}{0.45\textwidth}
+
 \textbf{Jetbrains TeamCity Architecture}
-\begin{figure}[H]
-	\centering
-  %\input{plots/schemes/schemes_quenched}
-  %\adjustbox{trim={.01\width} {.35\height} {0.01\width} {.35\height},clip}%
-    {\includegraphics[width=1.8in]{diagrams/teamcity.pdf}}
-\end{figure}
+        \centering
+        \includegraphics[width=0.9\textwidth]{diagrams/teamcity.pdf} % first figure itself
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{logos/jetbrains.pdf}
+        \includegraphics[width=0.4\textwidth]{logos/teamcity.pdf}
+        \end{minipage}
+
+% \begin{figure}[H]
+% 	\centering
+%   %\input{plots/schemes/schemes_quenched}
+%   %\adjustbox{trim={.01\width} {.35\height} {0.01\width} {.35\height},clip}%
+%     {\includegraphics[width=1.8in]{diagrams/teamcity.pdf}}
+% \end{figure}
 \vfill
 \begin{itemize}
  \item Scalable to arbitrary number of build servers
@@ -168,9 +185,9 @@
 \end{figure}
 
 \begin{itemize}
- \item Four servers, environment identical to the clusters login nodes
- \item Head server runs docker containers of various services, publicly visibly at \url{{git,ci}.dev.dirac.ed.ac.uk}
- \item Agents run on bare metal, not publicly visibly
+ \item Four AMD EPYC servers, same environment  as login nodes
+ \item Head server: docker containers, externally visible
+ \item Agents: run on bare metal, not externally visible
 \end{itemize}
 
 \end{frame}
@@ -178,10 +195,10 @@
 \begin{frame}
  \textbf{Triggers for the CI system}
 \begin{itemize}
- \item Each commit, including pending pull requests \\$\longrightarrow$ Build Grid and Hadrons and run unittests
+ \item Each commit, including pending pull requests \\$\longrightarrow$ build Grid and Hadrons and run unittests
  \item Once per day: \\$\longrightarrow$ deploy new production binaries if there were any changes \\
  $\longrightarrow$ run benchmarks, using latest production binaries
- \item Benchmarking is run regardless of source code changes, thus effectively monitors the runtime environment as well.
+ \item Benchmarking run regardless of code changes, thus monitoring the runtime environment as well.
 \end{itemize}
 
 \end{frame}
@@ -196,19 +213,20 @@
   \item Problem: Build servers do not have GPUs
   \item Solution: GPU-based unittests and benchmarking jobs are submitted via SLURM to the computing cluster
   \item Finished jobs report back to TeamCity via a REST API
+  \item Build agents are not waiting for SLURM queue
  \end{itemize}
 
 \end{frame}
 
 \section{Showcase}
 \begin{frame}
- \textbf{What does it look like?}\\
+ \textbf{What does it look like?}
  On a GitHub pull request:
   \begin{figure}[H]
 	\centering
   %\input{plots/schemes/schemes_quenched}
   %\adjustbox{trim={.01\width} {.35\height} {0.01\width} {.35\height},clip}%
-    {\includegraphics[width=4.5in]{diagrams/pr.jpg}}
+    {\includegraphics[width=4.3in]{diagrams/pr.jpg}}
 \end{figure}
 \end{frame}
 
